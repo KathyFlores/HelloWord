@@ -1,0 +1,56 @@
+{% extends 'word/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="learn-head secondary">
+    <h1 id="word-text"></h1>
+    <div class="learn-container">
+        <div class="choice-container">
+            <h4><form class="form" method="post">
+                
+                    <div class="form-group">
+                      <label class="sr-only" for="word_per_day">每日单词数</label>
+                      <div class="input-group">
+                        <div class="input-group-addon">每日单词数</div>
+                        <input type="text" name="word_per_day" class="form-control" id="word_per_day" value="{{user.word_per_day}}" >
+                        <div id="submit" class="input-group-addon" style="cursor:pointer;">确认</div>
+                      </div>
+                    </div>
+                  </form></h4>
+            <br/>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block pageJs %}
+<script>
+$(document).ready(()=>{
+    if('{{request.path}}'==='{%url "word_per_day" %}' || '{{request.path}}'==='{%url "progress" %}' || '{{request.path}}'==='{%url "mywords" %}' ){
+        $('#my').addClass('active');
+    }
+    $('#submit').click(()=>{
+        var word_per_day = $('#word_per_day').val()
+        if(!(word_per_day>=10 && word_per_day<=200)){
+            alert('请输入10 - 200的数字')
+        }
+        return;
+        $.ajax({
+            url: window.location.href,
+            type:'POST',
+            data:{
+                csrfmiddlewaretoken: csrftoken,
+                word_per_day: word_per_day
+            },
+            success:(res)=>{
+                if(res['code']===200)
+                    alert(res['msg']);
+            }
+        })
+        
+    })
+})
+
+</script>
+{% endblock %}
+

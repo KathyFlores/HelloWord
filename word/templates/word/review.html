@@ -1,0 +1,180 @@
+{% extends 'word/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="learn-head secondary">
+        <h1 id="word-text"></h1>
+        <div class="container learn">
+                <div class="unknow">不认识</div>
+                <div id="word-star" class="word-star"></div>
+            </div>
+        <div class="learn-container">
+            <div class="choice-container">
+    
+                
+            </div>
+        </div>
+</div>
+{% endblock %}
+{% block pageJs%}
+<script>
+$(document).ready(()=>{
+    if('{{request.path}}'==='{%url "review" %}' ){
+        $('#review').addClass('active');
+    }
+    var word_id = $.cookie('word_id')?Number($.cookie('word_id')):0;
+    var random_pos = ()=>{
+        return Math.floor(Math.random()*4);
+    }
+    var choiceContainer = $('.choice-container');
+    var starContainer = $('#word-star');
+
+    var refresh = (word_id_)=>{
+        var old_word_choices = [];
+        if($.cookie('word_choices'))
+            old_word_choices = $.cookie('word_choices').split('&');
+        var old_word = $.cookie('word');
+        choiceContainer.html('');
+        $.ajax({
+            url: "{% url 'get_a_master_word' %}",
+            type: "GET",
+            data: {
+                word_id: word_id_
+            },
+            success: res=>{
+                console.log(res.complete);
+                if(res.code===200){
+                    if(res.complete===0){
+                        $('#word-text').html(res['word']);
+                        var word_choices = old_word_choices;
+                        if(res['word']!==old_word) { //new word
+                            $.cookie('word',res['word']);
+                            word_choices = [];
+                            word_choices.push(res['word']);
+                            pos = random_pos();
+                            let confuse_index = 0;
+                            for(let i=0;i<4;i++){
+                                if(i===pos){
+                                    word_choices.push(res['right_para']);
+                                }
+                                else{
+                                    word_choices.push(res['confuse_para'][confuse_index++]);
+                                }
+                            }
+                            $.cookie('word_choices',word_choices.join('&'));
+                        }
+                        for(let i=0;i<4;i++){
+                            choiceContainer.append("<div class='choice'>"+word_choices[i+1]+"</div> ")
+                        }
+                        word_id=res['word_id'];
+                        if(res['star']===0){
+                            starContainer.html('<i class="fa fa-star"></i>加入收藏'); 
+                        }
+                        else{
+                            starContainer.html('<i class="fa fa-star on"></i>取消收藏'); 
+                        }
+                        addChoiceClickEvent(res);
+                        addUnknowClickEvent();
+                        addStarClickEvent();
+                    }
+                    else{
+                        $('#word-text').html('复习任务已完成！');
+                        $('.unknow').html('');
+                        starContainer.html('');
+                    }
+                }
+                else{
+                    alert(res.msg);
+                }
+            },
+            error: e=>{
+                console.log(e);
+                
+            }
+        })
+    };
+    refresh(word_id);
+    
+    function next(){
+        word_id = word_id + 1;
+        refresh(word_id);
+    }
+    function addStarClickEvent(){
+        starContainer.click(function(){
+            $.ajax({
+                url:"{% url 'star' %}",
+                type: "POST",
+                data:{
+                    csrfmiddlewaretoken: csrftoken,
+                    word: $('#word-text').html()
+                },
+                success: res=>{
+                    console.log(res);
+                    if(res['star']===0){
+                        starContainer.html('<i class="fa fa-star"></i>加入收藏'); 
+                    }
+                    else{
+                        starContainer.html('<i class="fa fa-star on"></i>取消收藏'); 
+                    }
+                }
+
+            })
+        })
+    }
+    function addChoiceClickEvent(word_detail){
+        $('.choice').click(function(){
+            $.ajax({
+                url: "{% url 'choose' %}",
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: csrftoken,
+                    word: $('#word-text').html(),
+                    paraphrase: $(this).text()
+                },
+                success: res=>{
+                    console.log(res);
+                    if(res['msg']==='correct'){
+                        next();
+                    }
+                    else if(res['msg']==='wrong'){
+                        choiceContainer.html("<div class='paraphrase-container'><div class='learn-label'>释义：</div><div class='paraphrase-box'></div></div><div class='btn btn-default next'>下一个</div>");
+                        innerHtml ='';
+                        word_detail.paraphrase.map((element, index)=>{
+                            innerHtml+=index+1 + '. '+"<strong>"+element.meaning+"</strong><div class='example'>";
+                            element.example.map((e)=>{
+                                innerHtml+="<div>"+e.sentence+"</div>";
+                                innerHtml+="<p>"+e.translation+"</p>";
+                            })
+                            innerHtml+="</div>"
+                        });    
+                        $('.paraphrase-box').html(innerHtml);
+                        addNextClickEvent();
+                    }
+                }
+            })
+        })
+    };
+    function addNextClickEvent(){
+        $('.next').click(()=>{
+            next();
+        });
+    }
+    function addUnknowClickEvent(){
+        $('.unknow').click(function(){
+            console.log('>>>>>');
+            $.ajax({
+                url:"{% url 'unknow' %}",
+                type: "POST",
+                data:{
+                    csrfmiddlewaretoken: csrftoken,
+                    word: $('#word-text').html()
+                },
+                success: res=>{
+                    console.log(res);
+                }
+
+            })
+        })
+    }
+});
+</script>
+{% endblock %}

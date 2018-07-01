@@ -1,0 +1,203 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content=""><meta name="author" content="">
+	<title>Home</title>
+	<link rel="favicon" href="{% static 'images/favicon.png' %}">
+	<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}"> 
+	<link rel="stylesheet" href="{% static 'css/bootstrap-theme.css' %}" media="screen"> 
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel='stylesheet' id='camera-css'  href="{% static 'css/camera.css' %}" type='text/css' media='all'> 
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	<script src="{% static 'js/html5shiv.js' %}"></script>
+	<script src="{% static 'js/respond.min.js' %}"></script>
+	<![endif]-->
+</head>
+<body>
+	<!-- Fixed navbar -->
+	<div class="navbar navbar-inverse">
+		<div class="container">
+			<div class="navbar-header">
+				<!-- Button for smallest screens -->
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+				<a class="navbar-brand" href="{% url 'index' %}">HelloWord
+                <!-- <img src="{% static 'images/logo.png' %}" alt="Hello Word">--></a> 
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav pull-right mainNav">
+					<li id="index"><a href="{% url 'index' %}">主页</a></li>
+					<li id="word"><a href="{% url 'word' %}">背诵单词</a></li>
+                    <li id="review"><a href="{% url 'review' %}">复习</a></li>
+                    <li id="test"><a href="{% url 'test_entry' %}">单词量测试</a></li>
+                    <li id="wordsets"><a href="{% url 'wordsets' %}">单词集</a></li>
+
+                    {% if user.is_authenticated %}
+					<li class="dropdown" id="my">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">我的 <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+                            <li><a href="{% url 'progress' %}">背诵进度</a></li>
+                            <li><a href="{% url 'mywords' %}">收藏的单词</a></li>
+                            <li><a href="{% url 'word_per_day' %}">每日背诵单词数</a></li>
+
+						</ul>
+                    </li> 
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                    <li><a class="no-bg" href="{% url 'logout' %}">退出</a></li>
+                    {% else %}
+					<li><a class="no-bg" data-toggle="modal" data-target="#login-modal">登录</a></li><li class="nav-span">/</li>
+                    <li><a class="no-bg" data-toggle="modal" data-target="#signup-modal">注册</a></li>
+                    <div id="login-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="exampleModalLabel">登录</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" id="login-form">
+                                        <div class="form-group">
+                                            <label for="login-username" class="col-sm-2 control-label">用户名</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" required class="form-control" id="login-username">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="login-password" class="col-sm-2 control-label">密码</label>
+                                            <div class="col-sm-10">
+                                                <input type="password" required class="form-control" id="login-password">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="button" id="login-btn" class="btn btn-primary">登录</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="signup-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="exampleModalLabel">注册</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" id="signup-form">
+                                        <div class="form-group">
+                                            <label for="signup-username" class="col-sm-2 control-label">用户名</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" required class="form-control" id="signup-username">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="signup-email" class="col-sm-2 control-label">邮箱</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" required class="form-control" id="signup-email">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="signup-password1" class="col-sm-2 control-label">密码</label>
+                                            <div class="col-sm-10">
+                                                <input type="password" required class="form-control" id="signup-password1">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="signup-password2" class="col-sm-2 control-label">确认密码</label>
+                                            <div class="col-sm-10">
+                                                <input type="password" required class="form-control" id="signup-password2">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="button" id="signup-btn" class="btn btn-primary">注册</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</div>
+	<!-- /.navbar -->
+
+	{% block content %}
+    {% endblock %}
+    
+    
+		<div class="footer2">
+			<div class="container">
+				<div class="row">
+
+					<div class="col-md-6 panel">
+						
+					</div>
+
+					<div class="col-md-6 panel">
+						<div class="panel-body">
+							<p class="text-right">
+								Copyright &copy; 2018 王淼
+							</p>
+						</div>
+					</div>
+
+				</div>
+				<!-- /row of panels -->
+			</div>
+		</div>
+	</footer>
+
+	<!-- JavaScript libs are placed at the end of the document so the pages load faster -->
+	<script src="{% static 'js/modernizr-latest.js' %}"></script> 
+	<script type='text/javascript' src="{% static 'js/jquery.min.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/fancybox/jquery.fancybox.pack.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/jquery.cookie.min.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/jquery.cslider.js' %}"></script>
+
+    <script type='text/javascript' src="{% static 'js/jquery.mobile.customized.min.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/jquery.easing.1.3.js' %}"></script> 
+    <script type='text/javascript' src="{% static 'js/camera.min.js' %}"></script> 
+    <script src="{% static 'js/jquery.isotope.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script> 
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script>
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }            
+        var csrftoken = getCookie('csrftoken');
+        var login_url = "{% url 'login' %}";
+        var signup_url = "{% url 'signup' %}";
+    </script>
+    
+    <script src="{% static 'js/login.js' %}"></script>
+    <script src="{% static 'js/signup.js' %}"></script>
+    {% block pageJs %}
+    
+    {% endblock %}
+    
+</body>
+</html>

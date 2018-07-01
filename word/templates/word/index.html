@@ -1,0 +1,104 @@
+{% extends 'word/base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+
+	<!-- Header -->
+	<header id="head">
+		<div class="container">
+            <div class="heading-text">							
+                <h1 class="animated flipInY delay1">Hello word!</h1>
+                <p>Where there is a will there is a way.</p>
+                <p>有志者，事竟成。</p>
+            </div>
+            
+                <div class="fluid_container">                       
+                <div class="camera_wrap camera_emboss pattern_1" id="camera_wrap_4">
+                    <div data-thumb="{% static 'images/slides/thumbs/img1.jpg' %}" data-src="{% static 'images/slides/img1.jpg' %}">
+                    </div> 
+                    <div data-thumb="{% static 'images/slides/thumbs/img2.jpg' %}" data-src="{% static 'images/slides/img2.jpg' %}">
+                    </div>
+                    <div data-thumb="{% static 'images/slides/thumbs/img3.jpg' %}" data-src="{% static 'images/slides/img3.jpg' %}">
+                    </div> 
+                </div><!-- #camera_wrap_3 -->
+            </div><!-- .fluid_container -->
+		</div>
+	</header>
+	<!-- /Header -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="grey-box-icon">
+                    <div class="icon-box-top grey-box-icon-pos">
+                        <img src="{% static 'images/1.png' %}" alt="" />
+                    </div><!--icon box top -->
+                    <h4>单词集</h4>
+                    <p>Lost time is never found again.</p>
+                    <p><a href="{% url 'wordsets' %}"><em>进入</em></a></p>
+                </div><!--grey box -->
+            </div><!--/span3-->
+            <div class="col-md-3">
+                <div class="grey-box-icon">
+                    <div class="icon-box-top grey-box-icon-pos">
+                        <img src="{% static 'images/2.png' %}" alt="" />
+                    </div><!--icon box top -->
+                    <h4>单词量测试</h4>
+                    <p>Every little helps.</p>
+                    <p><a href="{% url 'test_entry'%}"><em>进入</em></a></p>
+                </div><!--grey box -->
+            </div><!--/span3-->
+            <div class="col-md-3">
+                <div class="grey-box-icon">
+                    <div class="icon-box-top grey-box-icon-pos">
+                        <img src="{% static 'images/3.png' %}" alt="" />
+                    </div><!--icon box top -->
+                    <h4>背诵单词</h4>
+                    <p>Time and tide wait no man.</p>
+                    <p><a href="{% url 'word'%}"><em>进入</em></a></p>
+                </div><!--grey box -->
+            </div><!--/span3-->
+            <div class="col-md-3">
+                <div class="grey-box-icon">
+                    <div class="icon-box-top grey-box-icon-pos">
+                        <img src="{% static 'images/4.png' %}" alt="" />
+                    </div><!--icon box top -->
+                    <h4>背诵进度</h4>
+                    <p>Man proposes, God deposes.</p>
+                    <p><a href="{% url 'progress'%}"><em>进入</em></a></p>
+                </div><!--grey box -->
+            </div><!--/span3-->
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+
+
+{% endblock %}
+{% block pageJs %}
+
+<script>
+        $(function(){
+            
+            $('#camera_wrap_4').camera({
+                transPeriod: 500,
+                time: 3000,
+                height: '600',
+                loader: 'false',
+                pagination: true,
+                thumbnails: false,
+                hover: false,
+                playPause: false,
+                navigation: false,
+                opacityOnGrid: false,
+                imagePath: "{% static 'images/' %}"
+            });
+            if('{{request.path}}'=='{%url "index" %}'){
+                $('#index').addClass('active');
+            }
+        });
+    </script>
+     
+{% endblock %}

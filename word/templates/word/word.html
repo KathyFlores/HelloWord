@@ -1,0 +1,23 @@
+{% extends 'word/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="learn-head secondary">
+    <div class="container">
+        <h2>今日任务 {{user.get_today_master_count}} / {{user.word_num_today}} 个</h2>
+        
+        <p>Practice makes perfect!</p>
+        <br/>
+
+        <a href="{% url 'learn' %}" class="btn btn-default btn-lg">开始学习</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block pageJs %}
+<script>
+    if('{{request.path}}'==='{%url "learn" %}' ||'{{request.path}}'==='{%url "word" %}' ){
+        $('#word').addClass('active');
+    }
+</script>
+
+{% endblock%}

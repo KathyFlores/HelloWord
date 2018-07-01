@@ -1,0 +1,23 @@
+{% extends 'word/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="learn-head secondary">
+    <div class="container">
+        <h2>单词总数 {{user.get_task_count}} 个</h2>
+        <h2>已掌握 {{user.get_master_word_count}} 个</h2>
+        <h2>正在学 {{user.get_learning_word_count}} 个</h2>
+
+        <br/>
+
+        <a href="{% url 'word' %}" class="btn btn-default btn-lg">继续学习</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block pageJs %}
+<script>
+    if('{{request.path}}'==='{%url "word_per_day" %}' || '{{request.path}}'==='{%url "progress" %}' || '{{request.path}}'==='{%url "mywords" %}' ){
+        $('#my').addClass('active');
+    }
+</script>
+{% endblock %}

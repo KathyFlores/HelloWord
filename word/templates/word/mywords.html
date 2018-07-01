@@ -1,0 +1,54 @@
+{% extends 'word/base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="container">
+   
+    <ul class="list-group">
+        {% for word in words %}
+        <li class="list-group-item">
+            <span class="badge star-badge on" data-word="{{word.text}}"><i class="fa fa-star"></i></span>
+            <div class="my-word" >{{word.text}}</div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<br/>
+    <br/>
+    <br/>
+    <br/>
+{% endblock %}
+
+{% block pageJs %}
+<script>
+$(document).ready(()=>{
+    if('{{request.path}}'==='{%url "word_per_day" %}' || '{{request.path}}'==='{%url "progress" %}' || '{{request.path}}'==='{%url "mywords" %}' ){
+        $('#my').addClass('active');
+    }
+    function addStarClickEvent(){
+        $('.star-badge').click(function(){
+            console.log('hi')
+            $.ajax({
+                url:"{% url 'star' %}",
+                type: "POST",
+                data:{
+                    csrfmiddlewaretoken: csrftoken,
+                    word: $(this).data('word')
+                },
+                success: res=>{
+                    console.log(res);
+                    if(res['star']===0){
+                        $(this).removeClass('on');
+                    }
+                    else{
+                        $(this).addClass('on');
+                    }
+                }
+
+            })
+        })
+    };
+    addStarClickEvent();
+})
+</script>
+{% endblock %}

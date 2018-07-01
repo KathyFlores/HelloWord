@@ -1,0 +1,139 @@
+{% extends 'word/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="learn-head secondary">
+        <h1 id="word-text"></h1>
+        <div class="learn-container">
+            <div class="choice-container">
+                
+            </div>
+        </div>
+</div>
+<div class="modal fade" id="grade-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">考核结束</h4>
+            </div>
+            <div class="modal-body" id="grade-text">
+                
+            </div>
+        
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{% block pageJs%}
+<script>
+$(document).ready(()=>{
+    if('{{request.path}}'==='{%url "test_entry" %}' || '{{request.path}}'==='{%url "test" %}'){
+        $('#test').addClass('active');
+    }
+    var word_id = $.cookie('word_id')?Number($.cookie('word_id')):0;
+    var random_pos = ()=>{
+        return Math.floor(Math.random()*4);
+    }
+    var choiceContainer = $('.choice-container');
+    var refresh = (word_id_)=>{
+        var old_word_choices = [];
+        if($.cookie('word_choices'))
+            old_word_choices = $.cookie('word_choices').split('&');
+        var old_word = $.cookie('word');
+        choiceContainer.html('');
+        $.ajax({
+            url: window.location.href,
+            type: "POST",
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                word_id: word_id_,
+                oper: 'get_next_word',
+            },
+            success: res=>{
+                console.log(res.complete);
+                if(res.code===200){
+                    $('#word-text').html(res['word']);
+                    var word_choices = old_word_choices;
+                    if(res['word']!==old_word) { //new word
+                        $.cookie('word',res['word']);
+                        word_choices = [];
+                        word_choices.push(res['word']);
+                        pos = random_pos();
+                        let confuse_index = 0;
+                        for(let i=0;i<4;i++){
+                            if(i===pos){
+                                word_choices.push(res['right_para']);
+                            }
+                            else{
+                                word_choices.push(res['confuse_para'][confuse_index++]);
+                            }
+                        }
+                        $.cookie('word_choices',word_choices.join('&'));
+                    }
+                    for(let i=0;i<4;i++){
+                        choiceContainer.append("<div class='choice'>"+word_choices[i+1]+"</div> ")
+                    }
+                    word_id=res['word_id'];
+                    addChoiceClickEvent(res);
+                }
+                else{
+                    alert(res.msg);
+                }
+            },
+            error: e=>{
+                console.log(e);
+                
+            }
+        })
+    };
+    refresh(word_id);
+    
+    function next(){
+        word_id = word_id + 1;
+        refresh(word_id);
+    }
+    
+    function addChoiceClickEvent(word_detail){
+        $('.choice').click(function(){
+            $.ajax({
+                url: window.location.href,
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: csrftoken,
+                    word: $('#word-text').html(),
+                    paraphrase: $(this).text(),
+                    oper: 'choose',
+                },
+                success: res=>{
+                    console.log(res);
+                    if(res['code']===200){
+                        console.log(res['complete']);
+                        if(res['complete']===false){
+                            next();
+                        }
+                        else{
+                            var gradeModal = $('#grade-modal');
+                            $('#word-text').html('');
+                            choiceContainer.html('');
+                            $('#grade-text').text('您的分数为 '+res['grade']);
+                            gradeModal.modal('show');
+                            gradeModal.on('hide.bs.modal', (e)=>{
+                                window.location.href="{% url 'test_entry' %}"
+                            })
+                        }
+                           
+                    }
+                    
+                }
+            })
+        })
+    };
+    function addNextClickEvent(){
+        $('.next').click(()=>{
+            next();
+        });
+    }
+    
+});
+</script>
+{% endblock %}

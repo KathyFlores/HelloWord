@@ -1,0 +1,24 @@
+{% extends 'word/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="learn-head secondary">
+        <h1 id="word-text"></h1>
+        <div class="learn-container">
+            <div class="choice-container">
+                <h4>来测测你的单词量！</h4>
+                <p>共 50 个单词，每个单词 2 分，从词库中抽取</p>
+                <br/>
+                <a href="{%url 'test'%}" class="btn btn-default btn-lg">开始测试</a>
+            </div>
+        </div>
+</div>
+
+{% endblock %}
+
+{% block pageJs %}
+<script>
+    if('{{request.path}}'==='{%url "test_entry" %}' || '{{request.path}}'==='{%url "test" %}'){
+        $('#test').addClass('active');
+    }
+</script>
+{% endblock %}
