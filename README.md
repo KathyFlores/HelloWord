@@ -1,7 +1,7 @@
 # Hello Word
 ---
 ### 地址
-[http://120.77.147.182:8080](http://120.77.147.182:8080)
+[http://word.kathyf3.com/](http://word.kathyf3.com/)
 
 ### 开发流程
 
