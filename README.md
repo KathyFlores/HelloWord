@@ -1,7 +1,7 @@
 # Hello Word
 ---
 ### 地址
-[http://word.kathyf3.com/](http://word.kathyf3.com/)
+[https://word.kathyf3.com/](https://word.kathyf3.com/)
 
 ### 开发流程
 
