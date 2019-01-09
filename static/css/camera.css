@@ -394,7 +394,8 @@
 *
 **************************/
 .pattern_1 .camera_overlayer {
-	background: url(../images/patterns/overlay1.png) repeat;
+	/*background: url(../images/patterns/overlay1.png) repeat;
+*/
 }
 .pattern_2 .camera_overlayer {
 	background: url(../images/patterns/overlay2.png) repeat;
